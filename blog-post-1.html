@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>データドリブン経営の第一歩：KPIツリーの正しい構築方法 | オーシマ R&C ブログ</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f7fb;
+      --surface: #ffffff;
+      --surface-2: #eef1f8;
+      --border: #e2e8f0;
+      --accent: #3b72f0;
+      --accent-light: #eff4ff;
+      --accent-glow: rgba(59, 114, 240, 0.12);
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.07), 0 2px 8px rgba(0,0,0,0.05);
+      --radius: 16px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background-color: var(--bg); color: var(--text-primary); font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Yu Gothic', sans-serif; line-height: 1.75; min-height: 100vh; }
+
+    /* ── Nav ── */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-inner { max-width: 860px; margin: 0 auto; padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-mark { width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #3b72f0, #7c3bf0); font-size: 12px; font-weight: 800; color: #fff; display: flex; align-items: center; justify-content: center; letter-spacing: -0.5px; }
+    .nav-logo span { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+    .nav-links { display: flex; gap: 4px; list-style: none; }
+    .nav-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; padding: 6px 12px; border-radius: 8px; transition: color 0.2s, background 0.2s; }
+    .nav-links a:hover { color: var(--text-primary); background: var(--surface-2); }
+    .nav-links a.active { color: var(--accent); background: var(--accent-light); font-weight: 600; }
+    .nav-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
+    .nav-toggle span { display: block; width: 22px; height: 2px; background: var(--text-secondary); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
+    .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-toggle.open span:nth-child(2) { opacity: 0; }
+    .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    @media (max-width: 600px) {
+      .nav-toggle { display: flex; }
+      .nav-links { display: none; position: absolute; top: 56px; left: 0; right: 0; background: rgba(255,255,255,0.97); border-bottom: 1px solid var(--border); flex-direction: column; padding: 12px 16px; gap: 2px; }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 10px 14px; }
+    }
+
+    /* ── Fade-in ── */
+    .fade-in { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    .fade-in.delay-1 { transition-delay: 0.1s; }
+    .fade-in.delay-2 { transition-delay: 0.2s; }
+
+    /* ── Layout ── */
+    .container { max-width: 720px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb { padding: 24px 0 0; }
+    .breadcrumb nav { position: static; background: none; border: none; backdrop-filter: none; }
+    .breadcrumb ol { display: flex; align-items: center; gap: 6px; list-style: none; font-size: 12px; color: var(--text-muted); flex-wrap: wrap; }
+    .breadcrumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+    .breadcrumb a:hover { color: var(--accent); }
+    .breadcrumb li + li::before { content: '/'; color: var(--border); }
+
+    /* ── Article header ── */
+    .article-header { padding: 32px 0 40px; }
+    .article-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+    .article-date { font-size: 13px; color: var(--text-muted); }
+    .article-tag { font-size: 11px; font-weight: 700; color: var(--accent); background: var(--accent-light); border: 1.5px solid var(--accent); padding: 3px 12px; border-radius: 100px; }
+    .article-header h1 { font-size: clamp(20px, 5vw, 28px); font-weight: 700; color: var(--text-primary); line-height: 1.45; margin-bottom: 16px; }
+    .article-lead { font-size: 15px; color: var(--text-secondary); line-height: 1.9; border-left: 3px solid var(--accent); padding-left: 18px; background: var(--accent-light); padding: 16px 20px 16px 20px; border-radius: 0 10px 10px 0; }
+
+    .divider { height: 1px; background: var(--border); }
+
+    /* ── Article body ── */
+    .article-body { padding: 48px 0 72px; }
+
+    .article-body h2 { font-size: 20px; font-weight: 700; color: var(--text-primary); margin: 48px 0 16px; padding-bottom: 12px; border-bottom: 2px solid var(--accent-light); }
+    .article-body h2:first-child { margin-top: 0; }
+    .article-body h3 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin: 32px 0 12px; }
+    .article-body p { font-size: 15px; color: var(--text-secondary); line-height: 1.95; margin-bottom: 20px; }
+    .article-body ul, .article-body ol { padding-left: 24px; margin-bottom: 20px; }
+    .article-body li { font-size: 15px; color: var(--text-secondary); line-height: 1.85; margin-bottom: 6px; }
+
+    .callout { background: var(--accent-light); border: 1.5px solid var(--accent); border-radius: var(--radius); padding: 20px 24px; margin: 28px 0; }
+    .callout p { margin: 0; font-size: 14px; color: var(--text-secondary); }
+
+    .kpi-tree { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 24px; margin: 28px 0; font-size: 14px; color: var(--text-secondary); line-height: 2; box-shadow: var(--shadow-sm); }
+    .kpi-tree .root { color: var(--accent); font-weight: 700; font-size: 15px; }
+    .kpi-tree .level1 { padding-left: 20px; }
+    .kpi-tree .level1::before { content: '├─ '; color: var(--text-muted); }
+    .kpi-tree .level1:last-of-type::before { content: '└─ '; color: var(--text-muted); }
+    .kpi-tree .level2 { padding-left: 48px; color: var(--text-muted); font-size: 13px; }
+    .kpi-tree .level2::before { content: '└─ '; color: var(--border); }
+
+    .back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--accent); text-decoration: none; font-size: 13px; font-weight: 600; margin-top: 8px; transition: gap 0.2s; }
+    .back-link::before { content: '←'; }
+    .back-link:hover { gap: 12px; }
+
+    footer { border-top: 1px solid var(--border); padding: 32px 0; text-align: center; color: var(--text-muted); font-size: 12px; letter-spacing: 0.05em; background: var(--surface); }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <a class="nav-logo" href="index.html">
+        <div class="nav-logo-mark">ORC</div>
+        <span>オーシマ R&C</span>
+      </a>
+      <button class="nav-toggle" aria-label="メニュー" onclick="this.classList.toggle('open'); document.getElementById('nav-links').classList.toggle('open')">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">ホーム</a></li>
+        <li><a href="blog.html" class="active">ブログ</a></li>
+        <li><a href="company.html">会社概要</a></li>
+        <li><a href="contact.html">お問い合わせ</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <div class="breadcrumb">
+      <nav aria-label="breadcrumb">
+        <ol>
+          <li><a href="index.html">ホーム</a></li>
+          <li><a href="blog.html">ブログ</a></li>
+          <li>データドリブン経営の第一歩</li>
+        </ol>
+      </nav>
+    </div>
+
+    <article>
+      <header class="article-header fade-in">
+        <div class="article-meta">
+          <span class="article-date">2024年12月15日</span>
+          <span class="article-tag">データ活用</span>
+        </div>
+        <h1>データドリブン経営の第一歩：KPIツリーの正しい構築方法</h1>
+        <p class="article-lead">「データを活用したい」という声は多くの企業で聞かれますが、実際に成果につなげられている組織はまだ少数派です。その差を生む最大の要因の一つが、KPIの設計です。本記事では、経営目標とデータ分析をつなぐKPIツリーの構築方法を、実践的な視点から解説します。</p>
+      </header>
+
+      <div class="divider"></div>
+
+      <div class="article-body fade-in delay-1">
+
+        <h2>なぜKPIツリーが重要なのか</h2>
+        <p>多くの企業が「データドリブン」を目指しながら挫折する理由は、データの収集・分析技術の問題ではなく、「何を測るか」の設計が不十分なことにあります。膨大なダッシュボードを構築しても、経営の意思決定に直結しない指標ばかりでは、単なるコストになってしまいます。</p>
+        <p>KPIツリーとは、最終的な経営目標（North Star Metric）を頂点に置き、それを構成するサブ指標を論理的に分解したツリー構造です。このツリーが正しく構築されていれば、現場のオペレーターから経営者まで、同じ「言語」で事業の状態を把握し、打ち手を議論できるようになります。</p>
+
+        <div class="callout">
+          <p>KPIツリーの本質は「測定のための設計」ではなく、「意思決定のための地図」を作ることにあります。</p>
+        </div>
+
+        <h2>KPIツリー構築の3ステップ</h2>
+
+        <h3>ステップ1：North Star Metricを定義する</h3>
+        <p>まず、自社のビジネスモデルにとって最も重要な一つの指標を定めます。ECサイトであれば「月次購入顧客数」、SaaSであれば「ARR（年間経常収益）」などが候補となります。この指標が動けば事業が成長している、という確信を持てる指標を選ぶことが重要です。</p>
+
+        <h3>ステップ2：要素分解（ファクターツリー）を行う</h3>
+        <p>North Star Metricを、数式として分解します。たとえばECサイトの「月次購入顧客数」であれば、以下のように構造化できます。</p>
+
+        <div class="kpi-tree">
+          <div class="root">月次購入顧客数</div>
+          <div class="level1">新規顧客数</div>
+          <div class="level2">セッション数 × 新規CV率</div>
+          <div class="level1">リピート顧客数</div>
+          <div class="level2">既存顧客数 × 再購入率</div>
+        </div>
+
+        <p>この分解は「MECE（漏れなく、ダブりなく）」であることが理想ですが、最初から完璧を求める必要はありません。現場のオペレーションと照らし合わせながら、徐々に精度を上げていくことが現実的なアプローチです。</p>
+
+        <h3>ステップ3：各指標の「オーナー」と「モニタリング頻度」を決める</h3>
+        <p>KPIツリーが絵に描いた餅にならないよう、各指標に担当者（オーナー）を設定し、どの頻度でレビューするかを決めます。</p>
+        <ul>
+          <li>North Star Metric：月次・四半期レビュー（経営会議）</li>
+          <li>中間KPI：週次レビュー（部門ミーティング）</li>
+          <li>先行指標（Leading KPI）：日次モニタリング（現場オペレーション）</li>
+        </ul>
+
+        <h2>よくある失敗パターンと対処法</h2>
+        <p>KPIツリー構築で最もよく見られる失敗は、「既存のレポートに合わせてKPIを作る」というアプローチです。すでに収集しているデータから逆算してKPIを設計すると、ビジネス上重要だが計測が難しい指標が抜け落ちてしまいます。</p>
+        <p>正しい順序は「目標→KPI→データ設計」です。まず経営目標を定義し、それを測るために必要なKPIを設計し、最後にそのデータをどう収集・加工するかを検討します。この順序を守るだけで、多くの失敗を防ぐことができます。</p>
+
+        <div class="callout">
+          <p>データ活用の成熟度が高い組織の共通点は、KPIの定義書（指標名・計算式・データソース・オーナー・更新頻度）をドキュメント化し、全社で共有していることです。</p>
+        </div>
+
+        <h2>まとめ</h2>
+        <p>データドリブン経営は、ツールの導入や分析者の採用だけでは実現しません。経営目標から現場の日次行動までを一本の線でつなぐKPIツリーが、その基盤となります。設計に時間をかけることを惜しまず、まず「仮のツリー」を作って運用しながら改善していく姿勢が成功への近道です。</p>
+        <p>弊社では、KPI設計から分析基盤の構築、現場への定着支援まで一貫してサポートするコンサルティングサービスを提供しております。ご興味のある方は、お気軽にお問い合わせください。</p>
+
+        <a class="back-link" href="blog.html">ブログ一覧に戻る</a>
+
+      </div>
+    </article>
+
+  </div>
+
+  <footer>
+    <div style="max-width:860px;margin:0 auto;padding:0 24px;">
+      <p>© 2024 株式会社オーシマ・リサーチアンドコンサルティング. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+      { threshold: 0.08 }
+    );
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

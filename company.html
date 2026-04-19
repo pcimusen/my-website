@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>会社概要 | 株式会社オーシマ・リサーチアンドコンサルティング</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f7fb;
+      --surface: #ffffff;
+      --surface-2: #eef1f8;
+      --border: #e2e8f0;
+      --accent: #3b72f0;
+      --accent-light: #eff4ff;
+      --accent-glow: rgba(59, 114, 240, 0.12);
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.07), 0 2px 8px rgba(0,0,0,0.05);
+      --radius: 16px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background-color: var(--bg); color: var(--text-primary); font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Yu Gothic', sans-serif; line-height: 1.75; min-height: 100vh; }
+
+    /* ── Nav ── */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-inner { max-width: 860px; margin: 0 auto; padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-mark { width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #3b72f0, #7c3bf0); font-size: 12px; font-weight: 800; color: #fff; display: flex; align-items: center; justify-content: center; letter-spacing: -0.5px; }
+    .nav-logo span { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+    .nav-links { display: flex; gap: 4px; list-style: none; }
+    .nav-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; padding: 6px 12px; border-radius: 8px; transition: color 0.2s, background 0.2s; }
+    .nav-links a:hover { color: var(--text-primary); background: var(--surface-2); }
+    .nav-links a.active { color: var(--accent); background: var(--accent-light); font-weight: 600; }
+    .nav-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
+    .nav-toggle span { display: block; width: 22px; height: 2px; background: var(--text-secondary); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
+    .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-toggle.open span:nth-child(2) { opacity: 0; }
+    .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    @media (max-width: 600px) {
+      .nav-toggle { display: flex; }
+      .nav-links { display: none; position: absolute; top: 56px; left: 0; right: 0; background: rgba(255,255,255,0.97); border-bottom: 1px solid var(--border); flex-direction: column; padding: 12px 16px; gap: 2px; }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 10px 14px; }
+    }
+
+    /* ── Fade-in ── */
+    .fade-in { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    .fade-in.delay-1 { transition-delay: 0.1s; }
+    .fade-in.delay-2 { transition-delay: 0.2s; }
+    .fade-in.delay-3 { transition-delay: 0.3s; }
+
+    /* ── Layout ── */
+    .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+
+    .page-header { padding: 56px 0 40px; }
+    .section-label { font-size: 11px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; font-weight: 700; margin-bottom: 12px; }
+    .page-header h1 { font-size: clamp(22px, 5vw, 32px); font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+    .page-header p { font-size: 14px; color: var(--text-secondary); }
+
+    .divider { height: 1px; background: var(--border); }
+
+    .company-section { padding: 56px 0; }
+
+    /* ── Mission / Vision ── */
+    .mv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .mv-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px 28px; box-shadow: var(--shadow-sm); }
+    .mv-card .mv-type { font-size: 11px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; font-weight: 700; margin-bottom: 12px; }
+    .mv-card h3 { font-size: 17px; font-weight: 700; color: var(--text-primary); margin-bottom: 14px; line-height: 1.5; }
+    .mv-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.8; }
+
+    /* ── Values ── */
+    .values-list { display: flex; flex-direction: column; gap: 12px; }
+    .value-item { display: flex; align-items: flex-start; gap: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 24px; box-shadow: var(--shadow-sm); }
+    .value-num { flex-shrink: 0; font-size: 20px; font-weight: 800; color: var(--accent); opacity: 0.4; line-height: 1; width: 28px; padding-top: 2px; }
+    .value-item h3 { font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+    .value-item p { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
+
+    /* ── Info table ── */
+    .info-table { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); }
+    .info-row { display: grid; grid-template-columns: 160px 1fr; border-bottom: 1px solid var(--border); }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { padding: 18px 24px; font-size: 13px; font-weight: 600; color: var(--text-muted); background: var(--surface-2); letter-spacing: 0.03em; }
+    .info-value { padding: 18px 24px; font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+
+    footer { border-top: 1px solid var(--border); padding: 32px 0; text-align: center; color: var(--text-muted); font-size: 12px; letter-spacing: 0.05em; background: var(--surface); }
+
+    @media (max-width: 600px) {
+      .mv-grid { grid-template-columns: 1fr; }
+      .info-row { grid-template-columns: 1fr; }
+      .info-label { border-bottom: 1px solid var(--border); padding: 12px 20px; }
+      .info-value { padding: 12px 20px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <a class="nav-logo" href="index.html">
+        <div class="nav-logo-mark">ORC</div>
+        <span>オーシマ R&C</span>
+      </a>
+      <button class="nav-toggle" aria-label="メニュー" onclick="this.classList.toggle('open'); document.getElementById('nav-links').classList.toggle('open')">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">ホーム</a></li>
+        <li><a href="blog.html">ブログ</a></li>
+        <li><a href="company.html" class="active">会社概要</a></li>
+        <li><a href="contact.html">お問い合わせ</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <div class="container">
+      <p class="section-label fade-in">Company</p>
+      <h1 class="fade-in delay-1">会社概要</h1>
+      <p class="fade-in delay-2">データと戦略で、企業の意思決定を支える。</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <section class="company-section">
+    <div class="container">
+      <p class="section-label fade-in">Mission &amp; Vision</p>
+      <div class="mv-grid">
+        <div class="mv-card fade-in delay-1">
+          <p class="mv-type">Mission</p>
+          <h3>データの力で、すべての企業の意思決定を科学する</h3>
+          <p>定量・定性の両面からビジネス課題を構造化し、確信を持った経営判断を支援します。</p>
+        </div>
+        <div class="mv-card fade-in delay-2">
+          <p class="mv-type">Vision</p>
+          <h3>データドリブンな経営を、すべての組織の標準に</h3>
+          <p>規模や業種を問わず、あらゆる企業がデータを活かした経営を実践できる社会を目指します。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section class="company-section">
+    <div class="container">
+      <p class="section-label fade-in">Values</p>
+      <div class="values-list">
+        <div class="value-item fade-in delay-1">
+          <div class="value-num">01</div>
+          <div>
+            <h3>Evidence over Intuition</h3>
+            <p>勘や経験則に頼らず、常にデータと論理を根拠とした意思決定を重視します。</p>
+          </div>
+        </div>
+        <div class="value-item fade-in delay-2">
+          <div class="value-num">02</div>
+          <div>
+            <h3>Insight, Not Just Numbers</h3>
+            <p>数字を並べるだけでなく、その背後にある構造と意味を捉えた洞察を届けます。</p>
+          </div>
+        </div>
+        <div class="value-item fade-in delay-3">
+          <div class="value-num">03</div>
+          <div>
+            <h3>Execution-Oriented Strategy</h3>
+            <p>美しい戦略より実行できる戦略を。現場の実態と組織の文脈を踏まえた提案を行います。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section class="company-section">
+    <div class="container">
+      <p class="section-label fade-in">Company Info</p>
+      <div class="info-table fade-in delay-1">
+        <div class="info-row">
+          <div class="info-label">法人名</div>
+          <div class="info-value">株式会社オーシマ・リサーチアンドコンサルティング</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">英語表記</div>
+          <div class="info-value">Oshima Research &amp; Consulting Co., Ltd.</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">設立</div>
+          <div class="info-value">2020年4月</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">代表取締役</div>
+          <div class="info-value">大嶋 代表</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">所在地</div>
+          <div class="info-value">東京都港区</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">事業内容</div>
+          <div class="info-value">市場調査・競合分析 / 経営戦略コンサルティング / データ解析・統計モデリング / 新規事業開発支援 / 業務改革（BPR）</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">主要クライアント</div>
+          <div class="info-value">スタートアップ、中堅・大手事業会社（業種不問）</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">Email</div>
+          <div class="info-value"><a href="mailto:info@oshima-rc.co.jp" style="color: var(--accent); text-decoration: none;">info@oshima-rc.co.jp</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>© 2024 株式会社オーシマ・リサーチアンドコンサルティング. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+      { threshold: 0.1 }
+    );
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

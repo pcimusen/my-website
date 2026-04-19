@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ブログ | 株式会社オーシマ・リサーチアンドコンサルティング</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f7fb;
+      --surface: #ffffff;
+      --surface-2: #eef1f8;
+      --border: #e2e8f0;
+      --accent: #3b72f0;
+      --accent-light: #eff4ff;
+      --accent-glow: rgba(59, 114, 240, 0.12);
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.07), 0 2px 8px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.05);
+      --radius: 16px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background-color: var(--bg); color: var(--text-primary); font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Yu Gothic', sans-serif; line-height: 1.75; min-height: 100vh; }
+
+    /* ── Nav ── */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-inner { max-width: 860px; margin: 0 auto; padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-mark { width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #3b72f0, #7c3bf0); font-size: 12px; font-weight: 800; color: #fff; display: flex; align-items: center; justify-content: center; letter-spacing: -0.5px; }
+    .nav-logo span { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+    .nav-links { display: flex; gap: 4px; list-style: none; }
+    .nav-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; padding: 6px 12px; border-radius: 8px; transition: color 0.2s, background 0.2s; }
+    .nav-links a:hover { color: var(--text-primary); background: var(--surface-2); }
+    .nav-links a.active { color: var(--accent); background: var(--accent-light); font-weight: 600; }
+    .nav-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
+    .nav-toggle span { display: block; width: 22px; height: 2px; background: var(--text-secondary); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
+    .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-toggle.open span:nth-child(2) { opacity: 0; }
+    .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    @media (max-width: 600px) {
+      .nav-toggle { display: flex; }
+      .nav-links { display: none; position: absolute; top: 56px; left: 0; right: 0; background: rgba(255,255,255,0.97); border-bottom: 1px solid var(--border); flex-direction: column; padding: 12px 16px; gap: 2px; }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 10px 14px; }
+    }
+
+    /* ── Fade-in ── */
+    .fade-in { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    .fade-in.delay-1 { transition-delay: 0.1s; }
+    .fade-in.delay-2 { transition-delay: 0.2s; }
+    .fade-in.delay-3 { transition-delay: 0.3s; }
+
+    /* ── Layout ── */
+    .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+
+    .page-header { padding: 56px 0 40px; }
+    .section-label { font-size: 11px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; font-weight: 700; margin-bottom: 12px; }
+    .page-header h1 { font-size: clamp(22px, 5vw, 32px); font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+    .page-header p { font-size: 14px; color: var(--text-secondary); }
+
+    .divider { height: 1px; background: var(--border); }
+
+    /* ── Blog list ── */
+    .blog-list { padding: 48px 0 80px; display: flex; flex-direction: column; gap: 20px; }
+
+    .blog-card {
+      display: block;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      text-decoration: none;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+    }
+    .blog-card:hover { border-color: var(--accent); box-shadow: 0 8px 32px rgba(59,114,240,0.12); transform: translateY(-2px); }
+
+    .blog-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+    .blog-date { font-size: 12px; color: var(--text-muted); letter-spacing: 0.05em; }
+    .blog-tag { font-size: 11px; font-weight: 700; color: var(--accent); background: var(--accent-light); border: 1.5px solid var(--accent); padding: 2px 10px; border-radius: 100px; letter-spacing: 0.05em; }
+    .blog-card h2 { font-size: 18px; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; line-height: 1.5; }
+    .blog-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.8; }
+    .blog-read-more { display: inline-flex; align-items: center; gap: 6px; margin-top: 18px; font-size: 13px; font-weight: 600; color: var(--accent); }
+    .blog-read-more::after { content: '→'; transition: transform 0.2s; }
+    .blog-card:hover .blog-read-more::after { transform: translateX(4px); }
+
+    footer { border-top: 1px solid var(--border); padding: 32px 0; text-align: center; color: var(--text-muted); font-size: 12px; letter-spacing: 0.05em; background: var(--surface); }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <a class="nav-logo" href="index.html">
+        <div class="nav-logo-mark">ORC</div>
+        <span>オーシマ R&C</span>
+      </a>
+      <button class="nav-toggle" aria-label="メニュー" onclick="this.classList.toggle('open'); document.getElementById('nav-links').classList.toggle('open')">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">ホーム</a></li>
+        <li><a href="blog.html" class="active">ブログ</a></li>
+        <li><a href="company.html">会社概要</a></li>
+        <li><a href="contact.html">お問い合わせ</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <div class="container">
+      <p class="section-label fade-in">Blog</p>
+      <h1 class="fade-in delay-1">ブログ</h1>
+      <p class="fade-in delay-2">データ活用・経営戦略・業界トレンドに関する insight を発信しています。</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="blog-list">
+    <div class="container">
+      <a class="blog-card fade-in" href="blog-post-1.html">
+        <div class="blog-meta">
+          <span class="blog-date">2024年12月15日</span>
+          <span class="blog-tag">データ活用</span>
+        </div>
+        <h2>データドリブン経営の第一歩：KPIツリーの正しい構築方法</h2>
+        <p>「データを活用したい」という声は多くの企業で聞かれますが、実際に成果につなげられている組織はまだ少数派です。その差を生む最大の要因の一つが、KPIの設計です。本記事では、経営目標とデータ分析をつなぐKPIツリーの構築方法を、実践的な視点から解説します。</p>
+        <span class="blog-read-more">続きを読む</span>
+      </a>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <p>© 2024 株式会社オーシマ・リサーチアンドコンサルティング. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+      { threshold: 0.1 }
+    );
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

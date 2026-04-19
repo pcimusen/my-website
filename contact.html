@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>お問い合わせ | 株式会社オーシマ・リサーチアンドコンサルティング</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f7fb;
+      --surface: #ffffff;
+      --surface-2: #eef1f8;
+      --border: #e2e8f0;
+      --accent: #3b72f0;
+      --accent-light: #eff4ff;
+      --accent-glow: rgba(59, 114, 240, 0.12);
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.07), 0 2px 8px rgba(0,0,0,0.05);
+      --radius: 16px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background-color: var(--bg); color: var(--text-primary); font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Yu Gothic', sans-serif; line-height: 1.75; min-height: 100vh; }
+
+    /* ── Nav ── */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-inner { max-width: 860px; margin: 0 auto; padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-mark { width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #3b72f0, #7c3bf0); font-size: 12px; font-weight: 800; color: #fff; display: flex; align-items: center; justify-content: center; letter-spacing: -0.5px; }
+    .nav-logo span { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+    .nav-links { display: flex; gap: 4px; list-style: none; }
+    .nav-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; padding: 6px 12px; border-radius: 8px; transition: color 0.2s, background 0.2s; }
+    .nav-links a:hover { color: var(--text-primary); background: var(--surface-2); }
+    .nav-links a.active { color: var(--accent); background: var(--accent-light); font-weight: 600; }
+    .nav-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
+    .nav-toggle span { display: block; width: 22px; height: 2px; background: var(--text-secondary); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
+    .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-toggle.open span:nth-child(2) { opacity: 0; }
+    .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    @media (max-width: 600px) {
+      .nav-toggle { display: flex; }
+      .nav-links { display: none; position: absolute; top: 56px; left: 0; right: 0; background: rgba(255,255,255,0.97); border-bottom: 1px solid var(--border); flex-direction: column; padding: 12px 16px; gap: 2px; }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 10px 14px; }
+    }
+
+    /* ── Fade-in ── */
+    .fade-in { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    .fade-in.delay-1 { transition-delay: 0.1s; }
+    .fade-in.delay-2 { transition-delay: 0.2s; }
+    .fade-in.delay-3 { transition-delay: 0.3s; }
+    .fade-in.delay-4 { transition-delay: 0.4s; }
+
+    /* ── Layout ── */
+    .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+    .narrow { max-width: 600px; margin: 0 auto; }
+
+    .page-header { padding: 56px 0 40px; }
+    .section-label { font-size: 11px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; font-weight: 700; margin-bottom: 12px; }
+    .page-header h1 { font-size: clamp(22px, 5vw, 32px); font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+    .page-header p { font-size: 14px; color: var(--text-secondary); }
+
+    .divider { height: 1px; background: var(--border); }
+
+    /* ── Contact info ── */
+    .contact-section { padding: 56px 0 32px; }
+    .contact-info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 48px; }
+    .contact-info-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow-sm); }
+    .contact-info-icon { font-size: 24px; margin-bottom: 12px; }
+    .contact-info-card h3 { font-size: 12px; letter-spacing: 0.1em; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
+    .contact-info-card p, .contact-info-card a { font-size: 14px; color: var(--text-secondary); text-decoration: none; line-height: 1.6; }
+    .contact-info-card a:hover { color: var(--accent); }
+
+    /* ── Form ── */
+    .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 40px; box-shadow: var(--shadow-sm); }
+
+    .form-group { margin-bottom: 24px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; letter-spacing: 0.03em; }
+    .form-group label .required { color: var(--accent); margin-left: 4px; font-size: 11px; font-weight: 700; }
+
+    .form-control {
+      width: 100%;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: inherit;
+      padding: 12px 16px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      appearance: none;
+    }
+    .form-control:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); background: #fff; }
+    .form-control::placeholder { color: var(--text-muted); }
+    textarea.form-control { resize: vertical; min-height: 140px; line-height: 1.7; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    .btn-submit {
+      width: 100%;
+      padding: 16px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: opacity 0.2s, box-shadow 0.2s, transform 0.15s;
+      box-shadow: 0 4px 16px rgba(59,114,240,0.3);
+      margin-top: 8px;
+    }
+    .btn-submit:hover { opacity: 0.9; box-shadow: 0 8px 24px rgba(59,114,240,0.35); transform: translateY(-1px); }
+    .btn-submit:active { transform: translateY(0); }
+
+    .form-note { font-size: 12px; color: var(--text-muted); margin-top: 16px; text-align: center; line-height: 1.7; }
+
+    /* ── Thank you ── */
+    .thankyou { display: none; text-align: center; padding: 48px 24px; }
+    .thankyou-icon { font-size: 48px; margin-bottom: 20px; }
+    .thankyou h2 { font-size: 22px; font-weight: 700; color: var(--text-primary); margin-bottom: 12px; }
+    .thankyou p { font-size: 14px; color: var(--text-secondary); }
+
+    footer { border-top: 1px solid var(--border); padding: 32px 0; text-align: center; color: var(--text-muted); font-size: 12px; letter-spacing: 0.05em; background: var(--surface); margin-top: 80px; }
+
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+      .form-card { padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <a class="nav-logo" href="index.html">
+        <div class="nav-logo-mark">ORC</div>
+        <span>オーシマ R&C</span>
+      </a>
+      <button class="nav-toggle" aria-label="メニュー" onclick="this.classList.toggle('open'); document.getElementById('nav-links').classList.toggle('open')">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">ホーム</a></li>
+        <li><a href="blog.html">ブログ</a></li>
+        <li><a href="company.html">会社概要</a></li>
+        <li><a href="contact.html" class="active">お問い合わせ</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <div class="container">
+      <p class="section-label fade-in">Contact</p>
+      <h1 class="fade-in delay-1">お問い合わせ</h1>
+      <p class="fade-in delay-2">ご相談・ご依頼はお気軽にご連絡ください。初回相談は無料です。</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <section class="contact-section">
+    <div class="container">
+
+      <div class="contact-info-grid">
+        <div class="contact-info-card fade-in delay-1">
+          <div class="contact-info-icon">✉️</div>
+          <h3>Email</h3>
+          <a href="mailto:info@oshima-rc.co.jp">info@oshima-rc.co.jp</a>
+        </div>
+        <div class="contact-info-card fade-in delay-2">
+          <div class="contact-info-icon">📍</div>
+          <h3>所在地</h3>
+          <p>東京都港区</p>
+        </div>
+        <div class="contact-info-card fade-in delay-3">
+          <div class="contact-info-icon">🕐</div>
+          <h3>営業時間</h3>
+          <p>平日 9:00 – 18:00<br>（土日祝休）</p>
+        </div>
+      </div>
+
+      <div class="narrow">
+        <div class="form-card fade-in delay-2" id="form-card">
+          <form id="contact-form" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="name">お名前 <span class="required">必須</span></label>
+                <input type="text" id="name" name="name" class="form-control" placeholder="山田 太郎" required />
+              </div>
+              <div class="form-group">
+                <label for="company">会社名</label>
+                <input type="text" id="company" name="company" class="form-control" placeholder="株式会社〇〇" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="email">メールアドレス <span class="required">必須</span></label>
+              <input type="email" id="email" name="email" class="form-control" placeholder="example@company.co.jp" required />
+            </div>
+            <div class="form-group">
+              <label for="subject">お問い合わせ種別</label>
+              <select id="subject" name="subject" class="form-control">
+                <option value="">選択してください</option>
+                <option value="consult">経営・事業戦略のご相談</option>
+                <option value="research">市場調査・競合分析の依頼</option>
+                <option value="data">データ解析プロジェクトの依頼</option>
+                <option value="bpr">業務改革（BPR）のご相談</option>
+                <option value="other">その他</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="message">お問い合わせ内容 <span class="required">必須</span></label>
+              <textarea id="message" name="message" class="form-control" placeholder="ご相談内容をできるだけ詳しくご記入ください。" required></textarea>
+            </div>
+            <button type="submit" class="btn-submit">送信する</button>
+            <p class="form-note">送信いただいた内容は、2営業日以内にご返信いたします。<br>ご入力いただいた個人情報は、お問い合わせへの対応のみに使用します。</p>
+          </form>
+
+          <div class="thankyou" id="thankyou">
+            <div class="thankyou-icon">✅</div>
+            <h2>送信が完了しました</h2>
+            <p>お問い合わせありがとうございます。<br>2営業日以内に担当者よりご連絡いたします。</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>© 2024 株式会社オーシマ・リサーチアンドコンサルティング. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+      { threshold: 0.1 }
+    );
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    document.getElementById('contact-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const message = document.getElementById('message').value.trim();
+      if (!name || !email || !message) { alert('必須項目をすべてご入力ください。'); return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('有効なメールアドレスを入力してください。'); return; }
+      document.getElementById('contact-form').style.display = 'none';
+      document.getElementById('thankyou').style.display = 'block';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>株式会社オーシマ・リサーチアンドコンサルティング</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f7fb;
+      --surface: #ffffff;
+      --surface-2: #eef1f8;
+      --border: #e2e8f0;
+      --accent: #3b72f0;
+      --accent-light: #eff4ff;
+      --accent-glow: rgba(59, 114, 240, 0.12);
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.07), 0 2px 8px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.05);
+      --radius: 16px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background-color: var(--bg); color: var(--text-primary); font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Yu Gothic', sans-serif; line-height: 1.75; min-height: 100vh; }
+
+    /* ── Nav ── */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-inner { max-width: 860px; margin: 0 auto; padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-mark { width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #3b72f0, #7c3bf0); font-size: 12px; font-weight: 800; color: #fff; display: flex; align-items: center; justify-content: center; letter-spacing: -0.5px; }
+    .nav-logo span { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+    .nav-links { display: flex; gap: 4px; list-style: none; }
+    .nav-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; padding: 6px 12px; border-radius: 8px; transition: color 0.2s, background 0.2s; }
+    .nav-links a:hover { color: var(--text-primary); background: var(--surface-2); }
+    .nav-links a.active { color: var(--accent); background: var(--accent-light); font-weight: 600; }
+    .nav-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
+    .nav-toggle span { display: block; width: 22px; height: 2px; background: var(--text-secondary); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
+    .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-toggle.open span:nth-child(2) { opacity: 0; }
+    .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    @media (max-width: 600px) {
+      .nav-toggle { display: flex; }
+      .nav-links { display: none; position: absolute; top: 56px; left: 0; right: 0; background: rgba(255,255,255,0.97); border-bottom: 1px solid var(--border); flex-direction: column; padding: 12px 16px; gap: 2px; }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 10px 14px; }
+    }
+
+    /* ── Fade-in ── */
+    .fade-in { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    .fade-in.delay-1 { transition-delay: 0.1s; }
+    .fade-in.delay-2 { transition-delay: 0.2s; }
+    .fade-in.delay-3 { transition-delay: 0.3s; }
+    .fade-in.delay-4 { transition-delay: 0.4s; }
+
+    /* ── Layout ── */
+    .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── Hero ── */
+    header { padding: 80px 0 56px; text-align: center; }
+    .logo-mark { display: inline-flex; align-items: center; justify-content: center; width: 72px; height: 72px; border-radius: 18px; background: linear-gradient(135deg, #3b72f0, #7c3bf0); font-size: 26px; font-weight: 800; color: #fff; letter-spacing: -1px; margin-bottom: 28px; box-shadow: 0 8px 32px rgba(59, 114, 240, 0.3); }
+    header h1 { font-size: clamp(18px, 4vw, 24px); font-weight: 700; letter-spacing: 0.03em; color: var(--text-primary); margin-bottom: 14px; }
+    .tagline { font-size: clamp(13px, 3vw, 14px); color: var(--accent); letter-spacing: 0.06em; font-weight: 600; padding: 6px 20px; border: 1.5px solid var(--accent); border-radius: 100px; display: inline-block; background: var(--accent-light); }
+
+    .divider { height: 1px; background: var(--border); }
+
+    section { padding: 64px 0; }
+    .section-label { font-size: 11px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; font-weight: 700; margin-bottom: 20px; }
+
+    /* ── Cards ── */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 40px; box-shadow: var(--shadow-sm); }
+    .card p { color: var(--text-secondary); font-size: 15px; line-height: 1.95; }
+    .card p + p { margin-top: 20px; }
+
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .service-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 24px; box-shadow: var(--shadow-sm); transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s; }
+    .service-card:hover { border-color: var(--accent); box-shadow: 0 8px 32px rgba(59,114,240,0.12); transform: translateY(-3px); }
+    .service-icon { font-size: 28px; margin-bottom: 14px; }
+    .service-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; color: var(--text-primary); }
+    .service-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+
+    .strengths-list { display: flex; flex-direction: column; gap: 12px; }
+    .strength-item { display: flex; align-items: flex-start; gap: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 24px; box-shadow: var(--shadow-sm); }
+    .strength-badge { flex-shrink: 0; width: 40px; height: 40px; border-radius: 12px; background: var(--accent-light); border: 1.5px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .strength-item h3 { font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+    .strength-item p { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
+
+    .contact-card { background: linear-gradient(135deg, #3b72f0, #7c3bf0); border-radius: var(--radius); padding: 56px 40px; text-align: center; box-shadow: 0 8px 40px rgba(59,114,240,0.25); }
+    .contact-card h2 { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: #fff; }
+    .contact-card p { font-size: 14px; color: rgba(255,255,255,0.8); margin-bottom: 28px; }
+    .btn { display: inline-block; padding: 14px 36px; background: #fff; color: var(--accent); border-radius: 100px; font-size: 14px; font-weight: 700; letter-spacing: 0.05em; text-decoration: none; transition: opacity 0.2s, box-shadow 0.2s, transform 0.15s; box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+    .btn:hover { opacity: 0.92; box-shadow: 0 8px 24px rgba(0,0,0,0.15); transform: translateY(-1px); }
+
+    footer { border-top: 1px solid var(--border); padding: 32px 0; text-align: center; color: var(--text-muted); font-size: 12px; letter-spacing: 0.05em; background: var(--surface); }
+
+    @media (max-width: 600px) {
+      header { padding: 60px 0 40px; }
+      .card { padding: 28px 22px; }
+      .contact-card { padding: 40px 24px; }
+      .services-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <a class="nav-logo" href="index.html">
+        <div class="nav-logo-mark">ORC</div>
+        <span>オーシマ R&C</span>
+      </a>
+      <button class="nav-toggle" aria-label="メニュー" onclick="this.classList.toggle('open'); document.getElementById('nav-links').classList.toggle('open')">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html" class="active">ホーム</a></li>
+        <li><a href="blog.html">ブログ</a></li>
+        <li><a href="company.html">会社概要</a></li>
+        <li><a href="contact.html">お問い合わせ</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header>
+    <div class="container">
+      <div class="logo-mark fade-in">ORC</div>
+      <h1 class="fade-in delay-1">株式会社オーシマ・リサーチアンドコンサルティング</h1>
+      <p class="tagline fade-in delay-2">データドリブンな意思決定支援を中核とするコンサルティングベンチャー</p>
+    </div>
+  </header>
+
+  <div class="divider"></div>
+
+  <section id="about">
+    <div class="container">
+      <p class="section-label fade-in">About Us</p>
+      <div class="card fade-in delay-1">
+        <p>市場調査、競合分析、事業戦略立案といったリサーチ機能と、実行フェーズまで踏み込むコンサルティング機能を一体化させることで、クライアント企業の持続的成長を支援しています。</p>
+        <p>同社の強みは、定量・定性の両面から課題を構造化する高度な分析力と、現場実装を見据えた現実的な提案力にあります。ビッグデータ解析や統計モデリングなどの先進的手法を活用しつつも、経営環境や組織文化といった非数値要素も重視し、戦略の実効性を高めます。</p>
+        <p>また、スタートアップから大手企業まで幅広いクライアントに対応し、新規事業開発、マーケティング戦略、業務改革（BPR）など多様なテーマで実績を積み上げています。変化の激しいビジネス環境において、柔軟かつ迅速に価値提供を行うパートナーとして、企業の意思決定を力強く支える存在です。</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section id="services">
+    <div class="container">
+      <p class="section-label fade-in">Services</p>
+      <div class="services-grid">
+        <div class="service-card fade-in delay-1">
+          <div class="service-icon">🔍</div>
+          <h3>市場調査・競合分析</h3>
+          <p>定量・定性の両面から市場の実態を把握し、競合ポジショニングを明確化します。</p>
+        </div>
+        <div class="service-card fade-in delay-2">
+          <div class="service-icon">📊</div>
+          <h3>データ解析・統計モデリング</h3>
+          <p>ビッグデータ解析や統計手法を駆使し、課題の構造を数値で可視化します。</p>
+        </div>
+        <div class="service-card fade-in delay-3">
+          <div class="service-icon">🚀</div>
+          <h3>新規事業開発支援</h3>
+          <p>アイデア創出から事業計画策定まで、新事業立ち上げを一貫してサポートします。</p>
+        </div>
+        <div class="service-card fade-in delay-4">
+          <div class="service-icon">⚙️</div>
+          <h3>業務改革（BPR）</h3>
+          <p>業務プロセスを根本から見直し、組織の生産性と競争力を向上させます。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section id="strengths">
+    <div class="container">
+      <p class="section-label fade-in">Our Strengths</p>
+      <div class="strengths-list">
+        <div class="strength-item fade-in delay-1">
+          <div class="strength-badge">🧠</div>
+          <div>
+            <h3>高度な構造化分析力</h3>
+            <p>定量データと定性情報を統合し、問題の本質を正確に捉えた戦略立案を行います。</p>
+          </div>
+        </div>
+        <div class="strength-item fade-in delay-2">
+          <div class="strength-badge">⚡</div>
+          <div>
+            <h3>現場実装を見据えた提案</h3>
+            <p>理論にとどまらず、組織文化・実行可能性を踏まえた現実的なソリューションを提供します。</p>
+          </div>
+        </div>
+        <div class="strength-item fade-in delay-3">
+          <div class="strength-badge">🌐</div>
+          <div>
+            <h3>幅広いクライアント対応力</h3>
+            <p>スタートアップから大手企業まで、規模・業種を問わず柔軟に対応する実績があります。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section id="contact">
+    <div class="container">
+      <div class="contact-card fade-in">
+        <h2>お問い合わせ</h2>
+        <p>ご相談・ご依頼はお気軽にご連絡ください。<br>初回相談は無料で承っております。</p>
+        <a href="contact.html" class="btn">お問い合わせはこちら</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>© 2024 株式会社オーシマ・リサーチアンドコンサルティング. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+      { threshold: 0.12 }
+    );
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
